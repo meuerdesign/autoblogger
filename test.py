@@ -39,7 +39,7 @@ output_lock = threading.Lock()
 
 # Retry on rate limit error with exponential backoff
 @retry(wait=wait_random_exponential(multiplier=1, min=4, max=10), stop=stop_after_attempt(10))
-def generate_featured_image(text, meta_title):
+def generate_featured_image(meta_title):
     api_key = os.getenv('STABILITY_AI_API_KEY')
     api_host = 'https://api.stability.ai'
     engine_id = 'stable-diffusion-xl-1024-v1-0'
@@ -70,7 +70,7 @@ def generate_featured_image(text, meta_title):
     image_base64 = data["artifacts"][0]["base64"]
     if not os.path.exists('./out'):
         os.makedirs('./out')
-    image_filename = f"./out/{text.replace(' ', '_').replace('/', '_')}.png"
+    image_filename = f"./out/{meta_title.replace(' ', '_').replace('/', '_')}.png"
     with open(image_filename, "wb") as f:
         f.write(base64.b64decode(image_base64))
     return image_filename
